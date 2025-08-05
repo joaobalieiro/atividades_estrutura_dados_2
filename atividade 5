@@ -1,0 +1,65 @@
+#include <bits/stdc++.h>
+using namespace std;
+using pii = pair<double,int>;
+
+const double INF = 1e18;
+
+vector<double> dijkstra(int n, int src, const vector<vector<pair<int,double>>> &adj) {
+    vector<double> dist(n, INF);
+    priority_queue<pii, vector<pii>, greater<pii>> pq;
+    dist[src] = 0.0;
+    pq.push({0.0, src});
+    while (!pq.empty()) {
+        auto [d,u] = pq.top(); pq.pop();
+        if (d > dist[u]) continue;
+        for (auto &[v, w] : adj[u]) {
+            if (dist[v] > d + w) {
+                dist[v] = d + w;
+                pq.push({dist[v], v});
+            }
+        }
+    }
+    return dist;
+}
+
+int main(){
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+
+    int M, E, N, C;
+    cin >> M >> E >> N >> C;
+
+    vector<vector<pair<int,double>>> corredores(M), completo(M);
+
+    for (int i = 0; i < E; i++) {
+        int u, v;
+        double d;
+        cin >> u >> v >> d;
+        corredores[u].push_back({v,d});
+        corredores[v].push_back({u,d});
+    }
+    completo = corredores;
+
+    for (int i = 0; i < N; i++) {
+        int u, v;
+        cin >> u >> v;
+        completo[u].push_back({v,1.0});
+        completo[v].push_back({u,1.0});
+    }
+
+    auto distHero = dijkstra(M, 0, corredores);
+    auto distImpostor = dijkstra(M, 0, completo);
+
+    for (int i = 0; i < C; i++) {
+        int start;
+        cin >> start;
+        double h = distHero[start];
+        double imp = distImpostor[start];
+        if (imp < h) 
+            cout << "defeat\n";
+        else 
+            cout << "victory\n";
+    }
+
+    return 0;
+}
