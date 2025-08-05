@@ -1,0 +1,54 @@
+#include <cstdio>
+#include <vector>
+
+using namespace std;
+
+const int MAXN = 100000;
+int V[MAXN];
+
+// funcao de merge que conta inversoes em um intervalo
+long long merge_count(int l, int m, int r) {
+	static int aux[MAXN];
+	int i = l, j = m, k = 0;
+	long long inv = 0;
+	while (i < m && j < r) {
+		if (V[i] <= V[j]) {
+			aux[k++] = V[i++];
+		} else {
+			// todos os elementos V[i..m-1] formarao inversao com V[j]
+			inv += (m - i);
+			aux[k++] = V[j++];
+		}
+	}
+	while (i < m) aux[k++] = V[i++];
+	while (j < r) aux[k++] = V[j++];
+	// copia de volta para V[l..r)
+	for (i = l, k = 0; i < r; ++i, ++k) {
+		V[i] = aux[k];
+	}
+	return inv;
+}
+
+// merge sort que retorna o numero total de inversoes em [l, r)
+long long sort_count(int l, int r) {
+	if (r - l <= 1) return 0;
+	int m = (l + r) >> 1;
+	long long inv = sort_count(l, m);
+	inv += sort_count(m, r);
+	inv += merge_count(l, m, r);
+	return inv;
+}
+
+int main() {
+	while (true) {
+		int N;
+		if (scanf("%d", &N) != 1 || N == 0) break;
+		for (int i = 0; i < N; ++i) {
+			scanf("%d", &V[i]);
+		}
+		long long inv = sort_count(0, N);
+		// jaques ganha se inv eh par, caso contrario, fino
+		puts((inv % 2 == 0) ? "Jaques" : "Fino");
+	}
+	return 0;
+}

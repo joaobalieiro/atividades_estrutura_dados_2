@@ -1,0 +1,50 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    unordered_map<string,string> agenda;
+    char op;
+    while ( (cin >> op) && op != '0' ) {
+        string nome, telefone;
+        if (op == 'I') {
+            cin >> nome >> telefone;
+            if (agenda.find(nome) != agenda.end()) {
+                cout << "Contatinho ja inserido\n";
+            } else {
+                agenda[nome] = telefone;
+            }
+        }
+        else if (op == 'P') {
+            cin >> nome;
+            auto it = agenda.find(nome);
+            if (it != agenda.end()) {
+                cout << "Contatinho encontrado: telefone " << it->second << "\n";
+            } else {
+                cout << "Contatinho nao encontrado\n";
+            }
+        }
+        else if (op == 'R') {
+            cin >> nome;
+            auto it = agenda.find(nome);
+            if (it != agenda.end()) {
+                agenda.erase(it);
+            } else {
+                cout << "Operacao invalida: contatinho nao encontrado\n";
+            }
+        }
+        else if (op == 'A') {
+            cin >> nome >> telefone;
+            auto it = agenda.find(nome);
+            if (it != agenda.end()) {
+                it->second = telefone;
+            } else {
+                cout << "Operacao invalida: contatinho nao encontrado\n";
+            }
+        }
+    }
+
+    return 0;
+}
